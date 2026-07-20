@@ -1,0 +1,38 @@
+{
+    "Material": {
+        "AcrylicBlurRadius": 15
+    },
+    "Update": {
+        "CheckUpdateAtStartUp": true
+    },
+    "Folders": {
+        "Download": "D:/up/app/download",
+        "LocalMusic": []
+    },
+    "MainWindow": {
+        "DpiScale": "Auto",
+        "Language": "Auto",
+        "MicaEnabled": false
+    },
+    "QFluentWidgets": {
+        "FontFamilies": [
+            "Segoe UI",
+            "Microsoft YaHei",
+            "PingFang SC"
+        ],
+        "ThemeMode": "Light",
+        "ThemeColor": "#ff5a87aa"
+    },
+    "Futures": {
+        "Password": "",
+        "RememberPassword": false,
+        "Username": "owenhellen"
+    },
+    "Stock": {
+        "ServerHost": "218.75.126.9",
+        "ServerPort": 7709
+    },
+    "Data": {
+        "UseLocalData": true
+    }
+}

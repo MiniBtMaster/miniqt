@@ -1,0 +1,12 @@
+# 标记整个dist目录为编译产物，不计入语言统计
+dist/**/* linguist-vendored=true
+
+# 前端静态文件不计入语言统计
+*.js linguist-vendored=true
+*.css linguist-vendored=true
+*.html linguist-vendored=true
+*.svg linguist-vendored=true
+*.json linguist-vendored=true
+
+# Python源码标记
+*.py linguist-language=Python

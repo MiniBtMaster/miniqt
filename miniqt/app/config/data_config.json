@@ -1,0 +1,29 @@
+{
+    "Data": {
+        "UseLocalData": true
+    },
+    "QFluentWidgets": {
+        "FontFamilies": [
+            "Segoe UI",
+            "Microsoft YaHei",
+            "PingFang SC"
+        ],
+        "ThemeColor": "#ff5a87aa",
+        "ThemeMode": "Dark"
+    },
+    "LlamaCpp": {
+        "ConversationsPath": "D:/newminibt/gallery/app/llama",
+        "ModelPath": "D:/models"
+    },
+    "Ollama": {
+        "ContextLength": 4096,
+        "Host": 11434,
+        "KeepAlive": "5m",
+        "MaxLoadedModels": 1,
+        "MaxMemory": "10gb",
+        "Models": "D:/ollama_models/.ollama/models",
+        "NumParallel": 1,
+        "NumThreads": 3,
+        "Path": "C:/Users/Lenovo/AppData/Local/Programs/Ollama"
+    }
+}

@@ -1,0 +1,28 @@
+{
+    "Chart": {
+        "BearColor": "rgba(200, 97, 100, 100)",
+        "BullColor": "rgba(39, 157, 130, 100)",
+        "MouseLabelColor": "rgba(50, 50, 50, 0.8)",
+        "ShowToolBox": false
+    },
+    "QFluentWidgets": {
+        "FontFamilies": [
+            "Segoe UI",
+            "Microsoft YaHei",
+            "PingFang SC"
+        ],
+        "ThemeColor": "#ff5a87aa",
+        "ThemeMode": "Light"
+    },
+    "ChartData": {
+        "FuturesDataLength": 1000,
+        "UpdateMarketOnStartup": false
+    },
+    "ChartUpdate": {
+        "IndicatorUpdateInterval": 500,
+        "KlineUpdateInterval": 50,
+        "MaxWorkers": 4,
+        "StockIndicatorUpdateInterval": 3000,
+        "StockKlineUpdateInterval": 1000
+    }
+}

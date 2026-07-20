@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        #container {
+            width: 100%;
+            height: 100%;
+        }
+
+        #diff-container {
+            width: 100%;
+            height: 100%;
+            display: none;
+        }
+    </style>
+    <script src="package/dev/vs/loader.js"></script>
+</head>
+
+<body>
+    <div id="container"></div>
+    <div id="diff-container"></div>
+
+    <script>
+        let editor = null;
+
+        // 初始化Monaco Editor
+        function initEditor(code, language, theme) {
+            require.config({
+                paths: { 'vs': 'package/dev/vs' },
+                'vs/nls': { availableLanguages: {} }
+            });
+
+            // 配置worker路径
+            window.MonacoEnvironment = {
+                baseUrl: 'package/dev',
+                getWorker: function (moduleId, label) {
+                    // 使用正确的相对路径
+                    if (label === 'json') {
+                        return new Worker('package/dev/vs/language/json/jsonWorker.js');
+                    }
+                    if (label === 'css' || label === 'scss' || label === 'less') {
+                        return new Worker('package/dev/vs/language/css/cssWorker.js');
+                    }
+                    if (label === 'html' || label === 'handlebars' || label === 'razor') {
+                        return new Worker('package/dev/vs/language/html/htmlWorker.js');
+                    }
+                    if (label === 'typescript' || label === 'javascript') {
+                        return new Worker('package/dev/vs/language/typescript/tsWorker.js');
+                    }
+                    return new Worker('package/dev/vs/base/worker/workerMain.js');
+                }
+            };
+            require(['vs/editor/editor.main'], function () {
+                if (editor) {
+                    editor.dispose();
+                }
+
+                editor = monaco.editor.create(document.getElementById('container'), {
+                    acceptSuggestionOnCommitCharacter: true,
+                    acceptSuggestionOnEnter: 'off',
+                    accessibilityPageSize: 10,
+                    accessibilitySupport: 'on',
+                    autoClosingBrackets: 'always',
+                    autoClosingDelete: 'always',
+                    autoClosingOvertype: 'always',
+                    autoClosingQuotes: 'always',
+                    automaticLayout: true,
+                    codeLens: false,
+                    codeLensFontFamily: '',
+                    codeLensFontSize: 13,
+                    colorDecorators: false,
+                    comments: {
+                        ignoreEmptyLines: true,
+                        insertSpace: true,
+                    },
+                    contextmenu: false,
+                    columnSelection: false,
+                    autoSurround: 'never',
+                    copyWithSyntaxHighlighting: true,
+                    cursorBlinking: 'smooth',
+                    cursorSmoothCaretAnimation: 'on',
+                    cursorStyle: 'line',
+                    cursorSurroundingLines: 0,
+                    cursorSurroundingLinesStyle: 'all',
+                    cursorWidth: 2,
+                    minimap: {
+                        enabled: false,
+                    },
+                    scrollbar: {
+                        verticalScrollbarSize: 5,
+                        horizontalScrollbarSize: 5,
+                        arrowSize: 10,
+                        alwaysConsumeMouseWheel: false,
+                    },
+                    folding: true,
+                    links: true,
+                    overviewRulerBorder: false,
+                    renderLineHighlight: 'gutter',
+                    scrollBeyondLastLine: false,
+                    readOnly: false,
+                    lineNumbers: 'on',
+                    lineNumbersMinChars: 0,
+                    theme: theme || 'vs',
+                    value: code || '# Python Code Editor\nprint("Hello, World!")',
+                    language: language || 'python',
+                    fontSize: 13,
+                    roundedSelection: true,
+                    autoIndent: 'full',
+                    formatOnType: true,
+                    formatOnPaste: true
+                });
+            });
+        }
+
+        // 获取编辑器内容
+        function getCode() {
+            if (editor) {
+                return editor.getValue();
+            }
+            return '';
+        }
+
+        // 设置编辑器内容
+        function setCode(code) {
+            if (editor) {
+                editor.setValue(code);
+            }
+        }
+
+        // 设置编辑器语言
+        function setLanguage(language) {
+            if (editor) {
+                monaco.editor.setModelLanguage(editor.getModel(), language);
+            }
+        }
+
+        // 设置编辑器主题
+        function setTheme(theme) {
+            if (editor) {
+                monaco.editor.setTheme(theme);
+            }
+        }
+
+        // 更新编辑器主题（与setTheme功能相同，供外部调用）
+        function updateEditorTheme(theme) {
+            if (editor) {
+                monaco.editor.setTheme(theme);
+            }
+            // 如果有diff编辑器，也更新其主题
+            if (diffEditor) {
+                diffEditor.updateOptions({ theme: theme });
+            }
+        }
+
+        // 启用代码补全
+        function enableCodeCompletion() {
+            if (editor) {
+                // 代码补全已在默认配置中启用
+                // 这里可以添加自定义的代码补全配置
+            }
+        }
+
+        // 搜索功能
+        function find(text, replace = null) {
+            if (editor) {
+                editor.focus();
+                if (replace !== null) {
+                    editor.trigger('keyboard', 'editor.action.startFindReplaceAction');
+                } else {
+                    editor.trigger('keyboard', 'actions.find');
+                }
+            }
+        }
+
+        // 禁用右键菜单
+        function disableContextMenu() {
+            if (editor) {
+                editor.updateOptions({ contextmenu: false });
+            }
+        }
+
+        // 配置小地图
+        function setMinimapEnabled(enabled) {
+            if (editor) {
+                editor.updateOptions({
+                    minimap: {
+                        enabled: enabled
+                    }
+                });
+            }
+        }
+
+        // 配置字体大小
+        function setFontSize(size) {
+            if (editor) {
+                editor.updateOptions({ fontSize: size });
+            }
+        }
+
+        // 配置代码折叠
+        function setFoldingEnabled(enabled) {
+            if (editor) {
+                editor.updateOptions({ folding: enabled });
+            }
+        }
+
+        // 配置粘贴时格式化代码
+        function setFormatOnPaste(enabled) {
+            if (editor) {
+                editor.updateOptions({ formatOnPaste: enabled });
+            }
+        }
+
+        // 配置自动换行
+        function setWordWrap(enabled) {
+            if (editor) {
+                editor.updateOptions({ wordWrap: enabled ? 'on' : 'off' });
+            }
+        }
+
+        // 配置行号
+        function setLineNumbers(enabled) {
+            if (editor) {
+                editor.updateOptions({ lineNumbers: enabled ? 'on' : 'off' });
+            }
+        }
+
+        // 配置括号对着色
+        function setBracketColorization(enabled) {
+            if (editor) {
+                editor.updateOptions({ 'bracketPairColorization.enabled': enabled });
+            }
+        }
+
+        // 配置渲染空白字符
+        function setRenderWhitespace(enabled) {
+            if (editor) {
+                editor.updateOptions({ renderWhitespace: enabled ? 'all' : 'none' });
+            }
+        }
+
+        // 配置 Tab 大小
+        function setTabSize(size) {
+            if (editor) {
+                editor.updateOptions({ tabSize: size });
+            }
+        }
+
+        // 剪切功能
+        function cutText() {
+            if (editor) {
+                editor.focus();
+                editor.trigger('keyboard', 'editor.action.clipboardCutAction');
+            }
+        }
+
+        // 复制功能
+        function copyText() {
+            if (editor) {
+                editor.focus();
+                editor.trigger('keyboard', 'editor.action.clipboardCopyAction');
+            }
+        }
+
+        // 粘贴功能
+        function pasteText() {
+            if (editor) {
+                editor.focus();
+                editor.trigger('keyboard', 'editor.action.clipboardPasteAction');
+            }
+        }
+
+        // 插入文本（绕过浏览器粘贴安全限制，由 Qt 侧读取剪贴板后传入）
+        function insertText(text) {
+            if (editor && text) {
+                editor.focus();
+                editor.executeEdits('paste', [{
+                    range: editor.getSelection(),
+                    text: text,
+                    forceMoveMarkers: true
+                }]);
+            }
+        }
+
+        // 撤销功能
+        function undoAction() {
+            if (editor) {
+                editor.focus();
+                editor.trigger('keyboard', 'undo');
+            }
+        }
+
+        // 重做功能
+        function redoAction() {
+            if (editor) {
+                editor.focus();
+                editor.trigger('keyboard', 'redo');
+            }
+        }
+
+        // 放大字体
+        function zoomInAction() {
+            if (editor) {
+                editor.focus();
+                editor.trigger('keyboard', 'editor.action.fontZoomIn');
+            }
+        }
+
+        // 缩小字体
+        function zoomOutAction() {
+            if (editor) {
+                editor.focus();
+                editor.trigger('keyboard', 'editor.action.fontZoomOut');
+            }
+        }
+
+        // 清理资源
+        function dispose() {
+            if (editor) {
+                editor.dispose();
+                editor = null;
+            }
+            if (diffEditor) {
+                diffEditor.dispose();
+                diffEditor = null;
+            }
+        }
+
+        // ==================== Diff Editor 功能 ====================
+
+        let diffEditor = null;
+        let originalModel = null;
+        let modifiedModel = null;
+
+        // 初始化Diff编辑器
+        function initDiffEditor(originalCode, modifiedCode, language, theme) {
+            console.log('初始化Diff编辑器:', {
+                originalCodeLength: originalCode ? originalCode.length : 0,
+                modifiedCodeLength: modifiedCode ? modifiedCode.length : 0,
+                language: language,
+                theme: theme
+            });
+
+            require.config({
+                paths: { 'vs': 'package/dev/vs' },
+                'vs/nls': { availableLanguages: {} }
+            });
+
+            // 配置worker路径
+            window.MonacoEnvironment = {
+                baseUrl: 'package/dev',
+                getWorker: function (moduleId, label) {
+                    if (label === 'json') {
+                        return new Worker('package/dev/vs/language/json/jsonWorker.js');
+                    }
+                    if (label === 'css' || label === 'scss' || label === 'less') {
+                        return new Worker('package/dev/vs/language/css/cssWorker.js');
+                    }
+                    if (label === 'html' || label === 'handlebars' || label === 'razor') {
+                        return new Worker('package/dev/vs/language/html/htmlWorker.js');
+                    }
+                    if (label === 'typescript' || label === 'javascript') {
+                        return new Worker('package/dev/vs/language/typescript/tsWorker.js');
+                    }
+                    return new Worker('package/dev/vs/base/worker/workerMain.js');
+                }
+            };
+
+            require(['vs/editor/editor.main'], function () {
+                console.log('Monaco Editor 加载完成');
+
+                // 隐藏普通编辑器
+                if (editor) {
+                    editor.getDomNode().style.display = 'none';
+                    console.log('隐藏普通编辑器');
+                }
+
+                // 显示diff容器
+                const diffContainer = document.getElementById('diff-container');
+                if (diffContainer) {
+                    diffContainer.style.display = 'block';
+                    console.log('显示diff容器');
+                } else {
+                    console.error('未找到diff-container元素');
+                    return;
+                }
+
+                try {
+                    // 创建原始和修改后的模型
+                    originalModel = monaco.editor.createModel(originalCode || '', language || 'python');
+                    modifiedModel = monaco.editor.createModel(modifiedCode || '', language || 'python');
+                    console.log('创建模型成功');
+
+                    // 创建Diff编辑器
+                    if (diffEditor) {
+                        diffEditor.dispose();
+                        console.log('销毁旧的diffEditor');
+                    }
+
+                    diffEditor = monaco.editor.createDiffEditor(diffContainer, {
+                        automaticLayout: true,
+                        readOnly: true,
+                        renderSideBySide: true,  // 并排显示
+                        enableSplitViewResizing: true,
+                        ignoreTrimWhitespace: false,
+                        renderOverviewRuler: true,
+                        originalEditable: false,
+                        fontSize: 13,
+                        theme: theme || 'vs'
+                    });
+                    console.log('创建Diff编辑器成功');
+
+                    diffEditor.setModel({
+                        original: originalModel,
+                        modified: modifiedModel
+                    });
+                    console.log('设置模型成功');
+                } catch (error) {
+                    console.error('初始化Diff编辑器时出错:', error);
+                }
+            });
+
+            return 'Diff编辑器初始化完成';
+        }
+
+        // 获取原始代码
+        function getOriginalCode() {
+            if (originalModel) {
+                return originalModel.getValue();
+            }
+            return '';
+        }
+
+        // 获取修改后代码
+        function getModifiedCode() {
+            if (modifiedModel) {
+                return modifiedModel.getValue();
+            }
+            return '';
+        }
+
+        // 设置原始代码
+        function setOriginalCode(code) {
+            if (originalModel) {
+                originalModel.setValue(code || '');
+            }
+        }
+
+        // 设置修改后代码
+        function setModifiedCode(code) {
+            if (modifiedModel) {
+                modifiedModel.setValue(code || '');
+            }
+        }
+
+        // 更新Diff编辑器
+        function updateDiffEditor(originalCode, modifiedCode) {
+            setOriginalCode(originalCode);
+            setModifiedCode(modifiedCode);
+        }
+
+        // 切换到普通编辑器模式
+        function showNormalEditor() {
+            document.getElementById('diff-container').style.display = 'none';
+            if (editor) {
+                editor.getDomNode().style.display = 'block';
+            }
+        }
+
+        // 切换到Diff编辑器模式
+        function showDiffEditor() {
+            if (editor) {
+                editor.getDomNode().style.display = 'none';
+            }
+            document.getElementById('diff-container').style.display = 'block';
+        }
+
+        // 判断是否在Diff模式
+        function isDiffMode() {
+            return diffEditor !== null && document.getElementById('diff-container').style.display === 'block';
+        }
+
+        // 获取差异信息
+        function getDiffChanges() {
+            if (diffEditor) {
+                const lineChanges = diffEditor.getLineChanges();
+                return lineChanges ? JSON.stringify(lineChanges) : '[]';
+            }
+            return '[]';
+        }
+
+        // 渲染差异（参考掘金文章实现）
+        function renderDiff() {
+            if (!diffEditor || !originalModel || !modifiedModel) {
+                console.warn('Diff编辑器未初始化，无法渲染差异');
+                return;
+            }
+
+            try {
+                // 获取当前模型
+                const originalCode = originalModel.getValue();
+                const modifiedCode = modifiedModel.getValue();
+
+                // 重新设置模型以触发差异计算
+                diffEditor.setModel({
+                    original: monaco.editor.createModel(originalCode, originalModel.getLanguageId()),
+                    modified: monaco.editor.createModel(modifiedCode, modifiedModel.getLanguageId())
+                });
+
+                console.log('差异渲染完成');
+            } catch (error) {
+                console.error('渲染差异时出错:', error);
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,31 @@
+{
+  "last_folder": "C:\\Users\\Lenovo\\Desktop\\strategies",
+  "folders": {
+    "D:/newminibt/app": {
+      "open_files": [],
+      "active_file": "",
+      "last_used_time": "2026-07-19T07:56:42.934909"
+    },
+    "D:/newminibt/config": {
+      "open_files": [],
+      "active_file": "",
+      "last_used_time": "2026-07-19T09:14:57.764312"
+    },
+    "C:\\Users\\Lenovo\\Desktop\\main": {
+      "open_files": [
+        "c:\\users\\lenovo\\desktop\\main\\miniqt\\__main__.py"
+      ],
+      "active_file": "c:\\users\\lenovo\\desktop\\main\\miniqt\\__main__.py",
+      "last_used_time": "2026-07-19T10:00:47.990455"
+    },
+    "C:\\Users\\Lenovo\\Desktop\\strategies": {
+      "open_files": [
+        "c:\\users\\lenovo\\desktop\\strategies\\macd_strategy.py",
+        "c:\\users\\lenovo\\desktop\\strategies\\polyfit_strategy.py",
+        "c:\\users\\lenovo\\desktop\\strategies\\ma_cross.py"
+      ],
+      "active_file": "c:\\users\\lenovo\\desktop\\strategies\\polyfit_strategy.py",
+      "last_used_time": "2026-07-19T15:00:45.076240"
+    }
+  }
+}

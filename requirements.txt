@@ -1,0 +1,21 @@
+# minibt
+minibt>=1.2.6
+
+# 量化数据
+mootdx>=0.11.7
+
+# 数据库
+duckdb>=0.9.0
+
+# CLI 支持
+click>=8.0.0
+
+# Windows 终端支持
+pywinpty>=3.0.5
+
+# QtConsole 支持
+qtconsole>=5.7.2
+
+# JupyterLab 支持
+jupyterlab>=4.0.0
+
